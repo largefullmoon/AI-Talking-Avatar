@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lise_Talking_V001</title>
+    <style>
+        html, body {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #9b9b9b; /* Background color while loading */
+        }
+        
+        #renderCanvas {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+        #animateButton {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            z-index: 100;
+            padding: 10px 20px;
+            background-color: #2e2e2e;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        #animateButton:hover {
+            background-color: #0056b3;
+        }
+        .loadingScreenContainer {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(102, 102, 102, 0.8); /* Semi-transparent black background */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 999;
+        }
+        .loadingScreenLogo {
+            width: 512px; /* Adjust size as needed */
+        }
+    </style>
+</head>
+<body>
+    <div class="loadingScreenContainer" id="loadingScreen">
+        <img class="loadingScreenLogo" src="DigiCopyMeFirstDraft.png" alt="loadingScreen">
+    </div>
+    <canvas id="renderCanvas"></canvas>
+    <button id="animateButton">Animate</button>
+    <script type="module" src="main.js"></script>
+</body>
+</html>
