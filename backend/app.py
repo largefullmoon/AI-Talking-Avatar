@@ -1,55 +1,65 @@
-import os
-import speech_recognition as sr
-from flask import Flask, request, jsonify
+import os, openai
+from flask import Flask, request, jsonify, send_file
 from flask_cors import CORS
-from werkzeug.utils import secure_filename
-from pydub import AudioSegment
+from io import BytesIO
+from dotenv import load_dotenv
+from gtts import gTTS
+from openai import OpenAI
 
-UPLOAD_FOLDER = 'uploads'
 
+client = OpenAI()
+
+
+load_dotenv()
 app = Flask(__name__)
 CORS(app, resources={r"/*": {"origins": "*"}})  # Adjust the origin to your React app's URL
 cors = CORS(app, resources={r"/*": {"origins": "*"}}, methods=["GET", "POST", "OPTIONS"])
 app.app_context().push()
-
-app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-# Ensure the upload folder exists
-if not os.path.exists(UPLOAD_FOLDER):
-    os.makedirs(UPLOAD_FOLDER)
-
-
 @app.route("/", methods=["get"])
 def welcome():
     return "welcome"
-
-def convert_to_wav(file_path):
-    """Convert audio file to .wav format using pydub"""
-    sound = AudioSegment.from_mp3(file_path)
-    wav_file_path = file_path.replace('.mp3', '.wav')
-    sound.export(wav_file_path, format='wav')
-    return wav_file_path
 
 @app.route('/upload', methods=['POST'])
 def upload_audio():
     if 'audio' not in request.files:
         return jsonify({'error': 'No audio file provided'}), 400
-
     audio_file = request.files['audio']
-    filename = secure_filename(audio_file.filename)
-    file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-    audio_file.save(file_path)
+    file_contents = audio_file.read()
+    mp3_file = BytesIO(file_contents)
+    mp3_file.name = audio_file.filename
+    transcript = openai.audio.translations.create(model="whisper-1", file=mp3_file, response_format='text')
+    print("transcript")
+    print(transcript)
+    response = get_openai_response("hello, how are you?")
+    print("response")
+    print(response)
+    audio_file = text_to_speech(response)
+    return send_file(audio_file, as_attachment=True)
 
-    # Convert the audio file to .wav format for speech recognition
-    wav_file_path = convert_to_wav(file_path)
+def text_to_speech(text):
+    speech_file_path = "./speech.mp3"
+    response = client.audio.speech.create(
+        model="tts-1",
+        voice="nova",
+        input=text
+    )
+    response.stream_to_file(speech_file_path)
+    return speech_file_path
 
-    # Recognize the speech using SpeechRecognition library
-    recognizer = sr.Recognizer()
-    with sr.AudioFile(wav_file_path) as source:
-        audio = recognizer.record(source)
-        try:
-            transcription = recognizer.recognize_google(audio)
-            return jsonify({'transcription': transcription})
-        except sr.UnknownValueError:
-            return jsonify({'error': 'Could not understand the audio'}), 400
-        except sr.RequestError as e:
-            return jsonify({'error': f'Speech recognition request failed: {e}'}), 500
+def get_openai_response(user_input):
+    try:
+        # Define the OpenAI completion request
+        stream = client.chat.completions.create(
+            model="gpt-4o",
+            messages=[{"role": "user", "content": user_input}],
+            stream=True,
+        )
+        full_response = ""
+        for chunk in stream:
+            if chunk.choices[0].delta.content is not None:
+                content = chunk.choices[0].delta.content
+                full_response += content
+        return full_response
+
+    except Exception as e:
+        return e
