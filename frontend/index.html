@@ -65,20 +65,20 @@
 </head>
 
 <body>
-    <!-- <div class="loadingScreenContainer" id="loadingScreen">
+    <div class="loadingScreenContainer" id="loadingScreen">
         <img class="loadingScreenLogo" src="DigiCopyMeFirstDraft.png" alt="loadingScreen">
     </div>
     <canvas id="renderCanvas"></canvas>
-    <button id="animateButton">Animate</button> -->
-    <button id="start-btn">Start Recording</button>
-    <button id="stop-btn" disabled>Stop Recording</button>
+    <button id="animateButton">Animate</button>
+    <!-- <button id="start-btn">Start Recording</button>
+    <button id="stop-btn" disabled>Stop Recording</button> -->
 
-    <audio id="audio" controls></audio>
-    <button id="download-btn" disabled>Download MP3</button>
+    <!-- <audio id="audio" controls></audio> -->
+    <audio id="audio-player" controls style="display: none;"></audio>
 
     <script src="https://cdn.webrtc-experiment.com/RecordRTC.js"></script>
     <script src="recorder.js"></script>
-    <!-- <script type="module" src="main.js"></script> -->
+    <script type="module" src="main.js"></script>
 </body>
 
 </html>
