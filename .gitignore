@@ -3,3 +3,5 @@
 /frontend/dist
 
 /frontend/public
+
+/backend/.env
