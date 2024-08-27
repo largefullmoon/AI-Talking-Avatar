@@ -30,7 +30,7 @@ def upload_audio():
     transcript = openai.audio.translations.create(model="whisper-1", file=mp3_file, response_format='text')
     print("transcript")
     print(transcript)
-    response = get_openai_response("hello, how are you?")
+    response = get_openai_response(transcript)
     print("response")
     print(response)
     audio_file = text_to_speech(response)

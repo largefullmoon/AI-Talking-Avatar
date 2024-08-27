@@ -4,11 +4,10 @@ let audioBlob;  // Audio Blob to hold recorded data
 // const stopBtn = document.getElementById('stop-btn');
 // const audioElement = document.getElementById('audio');
 // const downloadBtn = document.getElementById('download-btn');
-
 // startBtn.addEventListener('click', startRecording);
-// stopBtn.addEventListener('click', stopRecording);
-downloadBtn.addEventListener('click', downloadAudio);
 
+// stopBtn.addEventListener('click', stopRecording);
+// downloadBtn.addEventListener('click', downloadAudio);
 async function startRecording() {
     // Get access to the user's microphone
     const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
