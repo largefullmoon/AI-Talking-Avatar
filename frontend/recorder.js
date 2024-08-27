@@ -1,18 +1,18 @@
 let recorder;  // Reference to RecordRTC recorder
 let audioBlob;  // Audio Blob to hold recorded data
-const startBtn = document.getElementById('start-btn');
-const stopBtn = document.getElementById('stop-btn');
-const audioElement = document.getElementById('audio');
-const downloadBtn = document.getElementById('download-btn');
+// const startBtn = document.getElementById('start-btn');
+// const stopBtn = document.getElementById('stop-btn');
+// const audioElement = document.getElementById('audio');
+// const downloadBtn = document.getElementById('download-btn');
 
-startBtn.addEventListener('click', startRecording);
-stopBtn.addEventListener('click', stopRecording);
+// startBtn.addEventListener('click', startRecording);
+// stopBtn.addEventListener('click', stopRecording);
 downloadBtn.addEventListener('click', downloadAudio);
 
 async function startRecording() {
     // Get access to the user's microphone
     const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-    
+
     // Create a new RecordRTC instance
     recorder = new RecordRTC(stream, {
         type: 'audio',
@@ -33,9 +33,9 @@ async function startRecording() {
 function stopRecording() {
     recorder.stopRecording(() => {
         audioBlob = recorder.getBlob();
-        const audioURL = URL.createObjectURL(audioBlob);
-        audioElement.src = audioURL;
-        downloadBtn.disabled = false;
+        // const audioURL = URL.createObjectURL(audioBlob);
+        // audioElement.src = audioURL;
+        // downloadBtn.disabled = false;
 
         // Send the audio file to the backend for processing
         sendAudioToBackend(audioBlob);
@@ -60,14 +60,17 @@ async function sendAudioToBackend(audioBlob) {
     formData.append('audio', audioBlob, 'audio.mp3');
 
     try {
-        const response = await fetch('http://localhost:5000/upload', {
+        const response = await fetch('http://localhost:5001/upload', {
             method: 'POST',
             body: formData
         });
-
-        const result = await response.json();
-        console.log('Transcription:', result.transcription);
-        alert(`Transcription: ${result.transcription}`);
+        const audioBlob = await response.blob();
+        // Create an object URL for the audio file
+        const audioUrl = URL.createObjectURL(audioBlob);
+        // Set the source of the audio element and play the audio
+        const audioPlayer = document.getElementById('audio-player');
+        audioPlayer.src = audioUrl;
+        audioPlayer.play();
     } catch (error) {
         console.error('Error sending audio to backend:', error);
     }
