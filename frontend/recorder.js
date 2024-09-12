@@ -39,9 +39,6 @@ function stopRecording() {
         // Send the audio file to the backend for processing
         sendAudioToBackend(audioBlob);
     });
-
-    stopBtn.disabled = true;
-    startBtn.disabled = false;
 }
 
 function downloadAudio() {
@@ -59,7 +56,7 @@ async function sendAudioToBackend(audioBlob) {
     formData.append('audio', audioBlob, 'audio.mp3');
 
     try {
-        const response = await fetch('http://localhost:5001/upload', {
+        const response = await fetch('http://127.0.0.1:5001/upload', {
             method: 'POST',
             body: formData
         });
