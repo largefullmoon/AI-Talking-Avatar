@@ -1,13 +1,5 @@
-let recorder;  // Reference to RecordRTC recorder
-let audioBlob;  // Audio Blob to hold recorded data
-// const startBtn = document.getElementById('start-btn');
-// const stopBtn = document.getElementById('stop-btn');
-// const audioElement = document.getElementById('audio');
-// const downloadBtn = document.getElementById('download-btn');
-// startBtn.addEventListener('click', startRecording);
-
-// stopBtn.addEventListener('click', stopRecording);
-// downloadBtn.addEventListener('click', downloadAudio);
+let recorder;
+let audioBlob;
 async function startRecording() {
     // Get access to the user's microphone
     const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
@@ -56,7 +48,7 @@ async function sendAudioToBackend(audioBlob) {
     formData.append('audio', audioBlob, 'audio.mp3');
 
     try {
-        const response = await fetch('http://127.0.0.1:5001/upload', {
+        const response = await fetch('http://127.0.0.1:5000/upload', {
             method: 'POST',
             body: formData
         });
@@ -71,3 +63,27 @@ async function sendAudioToBackend(audioBlob) {
         console.error('Error sending audio to backend:', error);
     }
 }
+
+// const audio = new Audio('path/to/speech.mp3');
+// audio.play();
+
+// // Sync viseme animations with audio
+// const visemeTimings = [
+//     { time: 0.1, viseme: 'a' },
+//     { time: 0.3, viseme: 'o' },
+//     // ...more viseme timings from the TTS service
+// ];
+
+// audio.addEventListener('timeupdate', () => {
+//     const currentTime = audio.currentTime;
+//     const currentViseme = visemeTimings.find(v => v.time <= currentTime);
+
+//     if (currentViseme) {
+//         resetVisemes();
+//         applyViseme(currentViseme.viseme);
+//     }
+// });
+
+// audio.addEventListener('ended', () => {
+//     resetVisemes();
+// });
