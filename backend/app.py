@@ -18,7 +18,7 @@ app.app_context().push()
 @app.route("/", methods=["get"])
 def welcome():
     return "welcome"
-
+import base64
 @app.route('/upload', methods=['POST'])
 def upload_audio():
     if 'audio' not in request.files:
@@ -33,22 +33,52 @@ def upload_audio():
     steps = get_lip_move_steps(response)
     print(steps)
     audio_file = text_to_speech(response)
-    return send_file(audio_file, as_attachment=True)
+    # return send_file(audio_file, as_attachment=True)
+    # Convert audio file to Base64
+    with open(audio_file, "rb") as audio:
+        audio_base64 = base64.b64encode(audio.read()).decode('utf-8')
+    
+    # Return text and audio (in Base64 format) as JSON
+    return jsonify({"text": response, "audio": audio_base64, 'steps': steps})
 
 def text_to_speech(text):
     speech_file_path = "./speech.mp3"
     response = client.audio.speech.create(
         model="tts-1",
-        voice="nova",
+        voice="onyx",
         input=text
     )
     response.stream_to_file(speech_file_path)
     return speech_file_path
 
+@app.route('/tts', methods=['POST'])
+def tts():
+    audio_file = text_to_speech(request.form['text'])
+    return send_file(audio_file, as_attachment=True)
 def get_lip_move_steps(text):
     query = """
         Please provide a lip sync symbols for movement of my lips to the following following text.: '""" + text + """' by word.
-        Please provide a main one lip sync symbol for each word. lip sync symbol should be one character.
+        Please provide a main one lip sync symbol and start time and end time and between_time time miri-seconds for each word. lip sync symbol should be on below visems array.
+        Note: Every word's start and end time should be related all sentence's estimate time, between_time should be period from start_time and end_time
+        Please describe the space of between another paragraph as "viseme_PP"
+        This is visems array:
+        ["mouthOpen",
+        "viseme_PP",
+        "viseme_FF",
+        "Viseme_TH",
+        "viseme_DD",
+        "viseme_kk",
+        "viseme_CH",
+        "viseme_SS",
+        "viseme_nn",
+        "viseme_RR",
+        "viseme_aa",
+        "viseme_E",
+        "viseme_I",
+        "viseme_O",
+        "viseme_U"]
+        Please provide an only this JSON format. {word, lip_sync_symbol, start_time, end_time, between_time}
+        Don't mention about texts like "```json```", and don't mention another unnecessary symbols and words. only return JSON.
     """
     try:
         stream = client.chat.completions.create(
