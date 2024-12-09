@@ -5,7 +5,7 @@ const canvas = document.getElementById('renderCanvas');
 const engine = new BABYLON.Engine(canvas, true, { preserveDrawingBuffer: true, stencil: true });
 
 let scene, camera, mesh, animationGroup, isAnimating = false, sound;
-const animateButton = document.getElementById('animateButton');
+const uploadButton = document.getElementById('upload');
 let teethMesh, tongueMesh, headMesh;
 const createScene = function () {
     console.log("Creating scene...");
@@ -42,22 +42,16 @@ const createScene = function () {
     const loadingScreenDiv = document.getElementById('loadingScreen');
 
     console.log("Starting to load mesh...");
-    BABYLON.SceneLoader.ImportMesh('', './assets/', 'Liz_v08.glb', scene, function (meshes, particleSystems, skeletons, animationGroups) {
+    BABYLON.SceneLoader.ImportMesh('', './assets/', 'MartinTete2.glb', scene, function (meshes, particleSystems, skeletons, animationGroups) {
         console.log("Mesh loaded.");
         mesh = meshes[0];
         console.log("Mesh found and added to scene.");
-        mesh.scaling = new BABYLON.Vector3(2, 2, 2);
+        mesh.scaling = new BABYLON.Vector3(10, 10, 10);
         mesh.receiveShadows = true;
         shadowGenerator.addShadowCaster(mesh);
         meshes.forEach((mesh) => {
-            if (mesh.name == "Teeth.001") {
-                teethMesh = mesh;
-            }
-            if (mesh.name == "FBHead.001") {
+            if (mesh.name == "Head") {
                 headMesh = mesh
-            }
-            if (mesh.name == "Tongue.001") {
-                tongueMesh = mesh
             }
         })
         loadingScreenDiv.style.display = 'none';
@@ -69,6 +63,7 @@ const createScene = function () {
 }
 
 const mouseMove = async (meshs, viseme, start) => {
+    console.log(start)
     setTimeout(() => {
         meshs.forEach((mesh) => {
             const morphTargetManager = mesh.morphTargetManager;
@@ -100,7 +95,7 @@ const mouseMove = async (meshs, viseme, start) => {
         })
     }, start);
 }
-console.log("Initializing scene creation.");
+
 scene = createScene();
 
 engine.runRenderLoop(function () {
@@ -178,41 +173,26 @@ async function sendAudioToBackend(audioBlob) {
     formData.append('audio', audioBlob, 'audio.mp3');
 
     try {
-        const response = await fetch('https://api.digicopy.me/upload', {
+        const response = await fetch('http://localhost:5000/upload', {
             method: 'POST',
             body: formData
         });
-
         // Expect the response as JSON
         const jsonResponse = await response.json();
-
-        // Extract the transcribed text and base64 encoded audio
+        console.log(jsonResponse)
         const transcribedText = jsonResponse.text;
         const audioBase64 = jsonResponse.audio;
-        const steps = JSON.parse(jsonResponse.steps);
-        console.log(steps, "steps");
-        const allTime = steps[steps.length - 1]['end_time'];
+        const steps = jsonResponse.steps;
         const audioPlayer = document.getElementById('audio-player');
         if (audioBase64) {
             const audioUrl = `data:audio/mp3;base64,${audioBase64}`;
-            const audioElement = new Audio(audioUrl);
-
-            // Listen for when the metadata is loaded
-            let totalDuration = 0;
-            audioElement.addEventListener('loadedmetadata', async () => {
-                totalDuration = audioElement.duration;
-                audioPlayer.src = audioUrl;
-                audioPlayer.play();
-                for (let i = 0; i < steps.length; i++) {
-                    const step = steps[i];
-                    const startTime = step['start_time'] * totalDuration * 1000 / allTime;
-                    console.log(step['start_time'])
-                    console.log(totalDuration)
-                    console.log(allTime)
-                    console.log(startTime)
-                    await mouseMove([headMesh, teethMesh], step['lip_sync_symbol'], startTime);
-                }
-            });
+            audioPlayer.src = audioUrl;
+            audioPlayer.play();
+            for (let i = 0; i < steps.length; i++) {
+                const step = steps[i];
+                const startTime = step['start'];
+                await mouseMove([headMesh], step['viseme'], startTime * 1000);
+            }
         } else {
             console.error('No audio data received from backend.');
         }
@@ -221,9 +201,41 @@ async function sendAudioToBackend(audioBlob) {
     }
 }
 
+// const videoInput = document.getElementById('file');
 
-animateButton.addEventListener('click', function () {
-    visems.forEach(async (viseme, index) => {
-        await mouseMove([headMesh, teethMesh], viseme, index + 1);
-    })
-});
+// const transcriptText = document.getElementById("transcriptText");
+// uploadButton.addEventListener('click', async () => {
+//     const file = videoInput.files[0];
+
+//     if (!file) {
+//         console.log('No video file selected');
+//         return;
+//     }
+//     const formData = new FormData();
+//     formData.append('video', file, file.name);
+
+//     const response = await fetch('http://localhost:5000/uploadVideo', {
+//         method: 'POST',
+//         body: formData
+//     });
+//     const jsonResponse = await response.json();
+//     transcriptText.innerText = jsonResponse.text;
+// });
+
+// const fileInput = document.getElementById("file");
+// const videoPreview = document.getElementById("videoPreview");
+
+// // Event listener for file selection
+// fileInput.addEventListener("change", function () {
+//     const file = fileInput.files[0];
+//     if (file && file.type.startsWith("video/")) {
+//         // Create a URL for the selected file and set it as the video source
+//         const fileURL = URL.createObjectURL(file);
+//         videoPreview.src = fileURL;
+//         videoPreview.style.display = "block"; // Make the video visible
+//     } else {
+//         // Clear the video preview if the selected file is not a video
+//         videoPreview.src = "";
+//         videoPreview.style.display = "none";
+//     }
+// });
