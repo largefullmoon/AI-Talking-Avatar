@@ -116,6 +116,7 @@ def upload_audio():
     )
     # Match each word to the closest viseme
     words = transcript.words
+    print(words)
     visemes = [
         "mouthOpen", "viseme_PP", "viseme_FF", "Viseme_TH", "viseme_DD", "viseme_kk",
         "viseme_CH", "viseme_SS", "viseme_nn", "viseme_RR", "viseme_aa", "viseme_E",
