@@ -173,7 +173,7 @@ async function sendAudioToBackend(audioBlob) {
     formData.append('audio', audioBlob, 'audio.mp3');
 
     try {
-        const response = await fetch('http://localhost:5000/upload', {
+        const response = await fetch('https://api.digicopy.me/upload', {
             method: 'POST',
             body: formData
         });
