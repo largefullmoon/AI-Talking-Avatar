@@ -122,13 +122,13 @@ def upload_audio():
         "viseme_I", "viseme_O", "viseme_U"
     ]
     for word_entry in words:
-        word = word_entry['word']
+        word = word_entry.word
         # Find the best-matched viseme
         best_match = max(visemes, key=lambda v: get_similarity_score(word, v))
         score = get_similarity_score(word, best_match)
         # Assign the best match to the word entry
-        word_entry['viseme'] = best_match
-        word_entry['similarity'] = round(score, 2)
+        word_entry.viseme = best_match
+        word_entry.similarity = round(score, 2)
     end_time = time.time()
     # Calculate the total processing time
     total_time = end_time - start_time
