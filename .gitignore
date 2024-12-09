@@ -3,3 +3,4 @@
 /frontend/dist
 
 /backend/.env
+/backend/speech.mp3
