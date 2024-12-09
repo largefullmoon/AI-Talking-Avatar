@@ -66,10 +66,36 @@
             position: absolute;
             bottom: 10px;
             right: 47%;
-            width: 6%;
+            width: fit-content;
+            padding: 10px;
             height: 10%;
             cursor: pointer;
             border-radius: 20px;
+            transition: transform 0.2s ease-in-out;
+        }
+
+        .active {
+            transform: scale(1.1);
+            /* Slight zoom-in effect */
+            animation: pulse 1s infinite;
+            /* Pulse animation */
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(1.1);
+                box-shadow: 0 0 10px rgba(255, 0, 0, 0.7);
+            }
+
+            50% {
+                transform: scale(1.2);
+                box-shadow: 0 0 20px rgba(255, 0, 0, 0.9);
+            }
+
+            100% {
+                transform: scale(1.1);
+                box-shadow: 0 0 10px rgba(255, 0, 0, 0.7);
+            }
         }
 
         #call_btn:hover {

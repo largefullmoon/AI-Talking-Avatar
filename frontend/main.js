@@ -109,8 +109,19 @@ window.addEventListener('resize', function () {
 
 let recorder;
 let audioBlob;
-document.getElementById('call_btn').addEventListener('mousedown', startRecording);
-document.getElementById('call_btn').addEventListener('mouseup', stopRecording);
+let isRecording = false
+document.getElementById('call_btn').addEventListener('click', clickMice);
+const button = document.getElementById('call_btn');
+
+async function clickMice(params) {
+    if (isRecording) {
+        button.classList.remove('active');
+        stopRecording()
+    } else {
+        button.classList.add('active');
+        startRecording()
+    }
+}
 
 async function startRecording() {
     // Get access to the user's microphone
@@ -127,6 +138,7 @@ async function startRecording() {
 
     // Start recording
     recorder.startRecording();
+    isRecording = true
 }
 
 function stopRecording() {
@@ -139,6 +151,7 @@ function stopRecording() {
         // Send the audio file to the backend for processing
         sendAudioToBackend(audioBlob);
     });
+    isRecording = false
 }
 
 function downloadAudio() {
