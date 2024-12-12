@@ -42,7 +42,7 @@ const createScene = function () {
     const loadingScreenDiv = document.getElementById('loadingScreen');
 
     console.log("Starting to load mesh...");
-    BABYLON.SceneLoader.ImportMesh('', './assets/', 'MartinTete2.glb', scene, function (meshes, particleSystems, skeletons, animationGroups) {
+    BABYLON.SceneLoader.ImportMesh('', './assets/', 'MartinTete3.glb', scene, function (meshes, particleSystems, skeletons, animationGroups) {
         console.log("Mesh loaded.");
         mesh = meshes[0];
         console.log("Mesh found and added to scene.");
@@ -50,7 +50,7 @@ const createScene = function () {
         mesh.receiveShadows = true;
         shadowGenerator.addShadowCaster(mesh);
         meshes.forEach((mesh) => {
-            if (mesh.name == "Head") {
+            if (mesh.name == "FBHead_mesh.006") {
                 headMesh = mesh
             }
         })
