@@ -68,36 +68,36 @@ def upload_audio():
     mp3_file = BytesIO(file_contents)
     mp3_file.name = audio_file.filename
     transcript = openai.audio.translations.create(model="whisper-1", file=mp3_file, response_format='text')
-    # response = get_openai_response(transcript)
-    end_time = time.time()
+    response = get_openai_response(transcript)
+    # end_time = time.time()
+
+    # # Calculate the total processing time
+    # total_time = end_time - start_time
+    # print(total_time)
+    # # print(response)
+    # api_url = "https://oliviaazure1.azurewebsites.net/ChatBotServiceRest.svc/GetAnswerNew"
+    # user_id = "yassine"
+    # bot_name = "yassine6991"
+    # question = transcript
+    # # Prepare query parameters
+    # params = {
+    #     "userID": user_id,
+    #     "botName": bot_name,
+    #     "question": question
+    # }
+    # try:
+    #     # Send GET request to the API
+    #     api_response = requests.get(api_url, params=params)
+    #     # Check if the request was successful
+    #     if api_response.status_code == 200:
+    #         response = api_response.text
+    # except Exception as e:
+    #     return jsonify({"error": f"An error occurred: {str(e)}"}), 500
+    # end_time = time.time()
 
     # Calculate the total processing time
-    total_time = end_time - start_time
-    print(total_time)
-    # print(response)
-    api_url = "https://oliviaazure1.azurewebsites.net/ChatBotServiceRest.svc/GetAnswerNew"
-    user_id = "yassine"
-    bot_name = "yassine6991"
-    question = transcript
-    # Prepare query parameters
-    params = {
-        "userID": user_id,
-        "botName": bot_name,
-        "question": question
-    }
-    try:
-        # Send GET request to the API
-        api_response = requests.get(api_url, params=params)
-        # Check if the request was successful
-        if api_response.status_code == 200:
-            response = api_response.text
-    except Exception as e:
-        return jsonify({"error": f"An error occurred: {str(e)}"}), 500
-    end_time = time.time()
-
-    # Calculate the total processing time
-    total_time = end_time - start_time
-    print(total_time)
+    # total_time = end_time - start_time
+    # print(total_time)
     # steps = get_lip_move_steps(response)
     audio_file = text_to_speech(response)
     # Convert audio file to Base64
