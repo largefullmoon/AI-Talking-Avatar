@@ -192,7 +192,7 @@ def get_lip_move_steps(text):
     except Exception as e:
         return e
 def get_openai_response(user_input):
-    user_input = "Please answer in 1 or 2 sentences brifely \n " + user_input + "\n Please don't use ' for response, such as you're, they're he's I'm"
+    user_input = "Please answer in 1 or 2 sentences brifely \n " + user_input + " in French. You should answer in French.\n  Please don't use ' for response, such as you're, they're he's I'm."
     try:
         # Define the OpenAI completion request
         stream = client.chat.completions.create(
