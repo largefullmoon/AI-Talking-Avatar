@@ -197,7 +197,10 @@ def get_openai_response(user_input):
         # Define the OpenAI completion request
         stream = client.chat.completions.create(
             model="gpt-4o",
-            messages=[{"role": "user", "content": user_input}],
+            messages=[
+                {"role": "system", "content": "Please answer in 1 or 2 sentences brifely in French"},
+                {"role": "user", "content": user_input}
+                ],
             stream=True,
         )
         full_response = ""
