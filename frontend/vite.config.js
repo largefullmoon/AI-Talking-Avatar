@@ -1,5 +1,5 @@
 export default {
     server: {
-      port: 8002
+      port: 3000
     }
   };
