@@ -186,7 +186,7 @@ async function sendAudioToBackend(audioBlob) {
     formData.append('audio', audioBlob, 'audio.mp3');
 
     try {
-        const response = await fetch('https://openai.digicopy.me/upload', {
+        const response = await fetch('https://api.digicopy.me/upload', {
             method: 'POST',
             body: formData
         });
